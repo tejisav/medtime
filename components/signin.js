@@ -1,5 +1,6 @@
 import React from 'react'
 import Router from 'next/router'
+import Link from 'next/link'
 import { Row, Col, Form, Input, Label, Button } from 'reactstrap'
 import Cookies from 'universal-cookie'
 import { NextAuth } from 'next-auth/client'
@@ -53,7 +54,7 @@ export default class extends React.Component {
       return (
         <React.Fragment>
           <p className="text-center" style={{marginTop: 10, marginBottom: 30}}>{`If you don't have an account, one will be created when you sign in.`}</p>
-          <Row>
+          <Row style={{borderBottom: 1, borderBottomStyle: 'solid', borderBottomColor: '#dee2e6'}}>
             <Col xs={12} md={6}>
               <SignInButtons providers={this.props.providers}/>
             </Col>
@@ -64,13 +65,25 @@ export default class extends React.Component {
                   <Label htmlFor="email">Email address</Label><br/>
                   <Input name="email" disabled={this.state.submitting} type="text" placeholder="j.smith@example.com" id="email" className="form-control" value={this.state.email} onChange={this.handleEmailChange}/>
                 </p>
-                <p className="text-right">
+                <p className="text-center">
                   <Button id="submitButton" disabled={this.state.submitting} outline color="dark" type="submit">
                     {this.state.submitting === true && <span className="icon icon-spin ion-md-refresh mr-2"/>}
                     Sign in with email
                   </Button>
                 </p>
               </Form>
+            </Col>
+          </Row>
+          <p className="text-center" style={{marginTop: 30, marginBottom: 30}}>{`If you have an account.`}</p>
+          <Row>
+            <Col>
+              <p className="text-center">
+                <Link href="/auth/credentials" passHref>
+                  <Button disabled={this.state.submitting} outline color="dark">
+                    Sign in with credentials
+                  </Button>
+                </Link>
+              </p>
             </Col>
           </Row>
         </React.Fragment>
