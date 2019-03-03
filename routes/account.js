@@ -38,6 +38,18 @@ module.exports = (expressApp, functions) => {
       .then(user => {
         if (!user) return res.status(500).json({error: 'Unable to fetch profile'})
 
+        if (req.body.province)
+          user.province = req.body.province
+          
+        if (req.body.city)
+          user.city = req.body.city
+        
+        if (req.body.clinic)
+          user.clinic = req.body.clinic
+          
+        if (req.body.user)
+          user.user = req.body.user
+
         if (req.body.name)
           user.name = req.body.name
 
@@ -47,17 +59,21 @@ module.exports = (expressApp, functions) => {
             user.emailVerified = false
         
           user.email = req.body.email
-
         }
-          user.srcAvatar =  '//localhost:3000/static/image/tunganh.jpg'
+        
+        if (req.body.password)
+          user.password = req.body.password
+        
+        if (req.body.signUpComplete)
+          user.signUpComplete = true
+
+        user.srcAvatar =  '//localhost:3000/static/image/tunganh.jpg'
         if(req.body.src) {
-            user.srcAvatar = req.body.src
+          user.srcAvatar = req.body.src
         }
-
-
 
         if(req.body.address) {
-            user.address = req.body.address
+          user.address = req.body.address
         }
 
         return functions.update(user)

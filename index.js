@@ -68,7 +68,7 @@ nextApp
   })
 
   expressApp.get('/', (req, res) => {
-    return res.redirect('/static/example.html');
+    return res.redirect('/static/home.html');
   })
 
   expressApp.get('/dashboard', (req, res) => {

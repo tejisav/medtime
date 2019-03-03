@@ -16,7 +16,7 @@ export default class extends React.Component {
     // If the user is signed in, we look for a redirect URL cookie and send 
     // them to that page, so that people signing in end up back on the page they
     // were on before signing in. Defaults to '/'.
-    let redirectTo = '/'
+    let redirectTo = '/dashboard'
     if (session.user) {
       // Read redirect URL to redirect to from cookies
       redirectTo = cookies.get('redirect_url') || redirectTo
@@ -36,7 +36,7 @@ export default class extends React.Component {
     // The ensures client state is always updated after signing in or out.
     // (That's why we use a callback page)
     const session = await NextAuth.init({force: true})
-    Router.push(this.props.redirectTo || '/')
+    Router.push(this.props.redirectTo || '/dashboard')
   }
 
   render() {

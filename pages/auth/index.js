@@ -19,9 +19,9 @@ export default class extends Page {
     // If signed in already, redirect to account management page.
     if (props.session.user) {
       if (req) {
-        res.redirect('/account')
+        res.redirect('/dashboard')
       } else {
-        Router.push('/account')
+        Router.push('/dashboard')
       }
     }
 
