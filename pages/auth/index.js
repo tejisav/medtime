@@ -28,7 +28,7 @@ export default class extends Page {
     // If passed a redirect parameter, save it as a cookie
     if (query.redirect) {
       const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null)
-      cookies.set('redirect_url', query.redirect, { path: '/' })
+      cookies.set('redirect_url', query.redirect, { path: '/dashboard' })
     }
     
     return props

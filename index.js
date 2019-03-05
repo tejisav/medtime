@@ -51,7 +51,7 @@ nextApp
   const expressApp = nextAuthOptions.expressApp
 
   // Add admin routes
-  routes.admin(expressApp)
+  routes.admin(expressApp, nextAuthOptions.functions)
   
   // Add account management route - reuses functions defined for NextAuth
   routes.account(expressApp, nextAuthOptions.functions)

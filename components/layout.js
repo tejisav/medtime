@@ -40,7 +40,7 @@ export default class extends React.Component {
     // Save current URL so user is redirected back here after signing in
     if (this.state.modal !== true) {
       const cookies = new Cookies()
-      cookies.set('redirect_url', window.location.pathname, { path: '/' })
+      cookies.set('redirect_url', window.location.pathname, { path: '/dashboard' })
     }
 
     this.setState({
@@ -60,8 +60,8 @@ export default class extends React.Component {
           <script src="https://cdn.polyfill.io/v2/polyfill.min.js"/>
         </Head>
         <Navbar light className="navbar navbar-expand-md pt-3 pb-3">
-          <Link prefetch href="/">
-            <NavbarBrand href="/">
+          <Link prefetch href="/dashboard">
+            <NavbarBrand href="/dashboard">
               <span className="icon ion-md-home mr-1"></span> {Package.name}
             </NavbarBrand>
           </Link>
@@ -175,10 +175,10 @@ export class UserMenu extends React.Component {
      
      // Save current URL so user is redirected back here after signing out
      const cookies = new Cookies()
-     cookies.set('redirect_url', window.location.pathname, { path: '/' })
+     cookies.set('redirect_url', window.location.pathname, { path: '/dashboard' })
 
      await NextAuth.signout()
-     Router.push('/')
+     Router.push('/dashboard')
    }
    
   render() {

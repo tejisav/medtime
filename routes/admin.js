@@ -21,7 +21,7 @@ if (process.env.MONGO_URI) {
   })
 }
 
-module.exports = (expressApp) => {
+module.exports = (expressApp, functions) => {
 
   if (expressApp === null) {
     throw new Error('expressApp option must be an express server instance')
@@ -53,11 +53,11 @@ module.exports = (expressApp) => {
     }
     
     if (req.params.sort) response.sort = req.params.sort
-
+    
     let result
     return new Promise(function(resolve, reject) {
       result = usersCollection
-      .find()
+      .find({ type: "doctor", clinicID: req.user.id.toString(), $or: [ { clinicVerified: { $exists: false } }, { clinicVerified: { $ne: true } } ] })
       .skip(skip)
       .sort(sort)
       .limit(size)
@@ -82,6 +82,43 @@ module.exports = (expressApp) => {
       return res.status(500).json(err)
     })
     
+  })
+
+  // Expose a route to delete doctor accounts
+  expressApp.post('/admin/verify', (req, res) => {
+    if (req.user && req.user.admin && req.user.admin === true) {
+      functions.find({id: req.body.id})
+      .then(user => {
+        if (!user) return res.status(500).json({error: 'Unable to fetch doctor'})
+        
+        user.clinicVerified = true
+
+        return functions.update(user)
+      })
+      .then(() => {
+        return res.json({ok: true})
+      })
+      .catch(err => {
+        return res.status(500).json({error: 'Unable to verify doctor'})
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in with clinic account to verify doctors'})
+    }
+  })
+
+  // Expose a route to delete doctor accounts
+  expressApp.post('/admin/delete', (req, res) => {
+    if (req.user && req.user.admin && req.user.admin === true) {
+      functions.remove(req.body.id)
+      .then(() => {
+        return res.json({ok: true})
+      })
+      .catch(err => {
+        return res.status(500).json({error: 'Unable to delete doctor'})
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in with clinic account to delete doctors'})
+    }
   })
 
 }

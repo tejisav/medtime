@@ -37,7 +37,7 @@ export default class extends React.Component {
     
     // Save current URL so user is redirected back here after signing in
     const cookies = new Cookies()
-    cookies.set('redirect_url', window.location.pathname, { path: '/' })
+    cookies.set('redirect_url', window.location.pathname, { path: '/dashboard' })
     NextAuth.signin(this.state.email)
     .then(() => {
       Router.push(`/auth/check-email?email=${this.state.email}`)

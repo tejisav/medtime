@@ -6,12 +6,22 @@ import { Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap'
 import { NextAuth } from 'next-auth/client'
 import Page from '../components/page'
 import Layout from '../components/layout'
-import Cookies from 'universal-cookie'
 
 export default class extends Page {
 
-  static async getInitialProps({req}) {
+  static async getInitialProps({req, res}) {
     let props = await super.getInitialProps({req})
+
+    if (props.session.user) {
+      if (props.session.user.signUpComplete) {
+        if (req) {
+          res.redirect('/dashboard')
+        } else {
+          Router.push('/dashboard')
+        }
+      }
+    }
+
     props.linkedAccounts = await NextAuth.linked({req})
     return props
   }
@@ -21,16 +31,16 @@ export default class extends Page {
     this.state = {
       session: props.session,
       isSignedIn: (props.session.user) ? true : false,
-      isSignedUp: (props.session.user.signUpComplete) ? true : false,
-      province: 'BC',
-      city: 'Vancouver',
-      clinic: 'Langara Clinic',
-      user: 'doctor',
+      province: '',
+      city: '',
+      clinicID: '',
+      type: '',
       name: '',
       email: '',
       password: '',
       confirmPassword: '',
       emailVerified: false,
+      allClinics: [],
       alertText: null,
       alertStyle: null
     }
@@ -47,15 +57,9 @@ export default class extends Page {
     this.setState({
       session: session,
       isSignedIn: (session.user) ? true : false,
-      isSignedUp: (session.user.signUpComplete) ? true : false
     })
-
-    // If the user bounces off to link/unlink their account we want them to
-    // land back here after signing in with the other service / unlinking.
-    const cookies = new Cookies()
-    cookies.set('redirect_url', window.location.pathname, { path: '/' })
-    
     this.getProfile()
+    this.getClinics()
   }
   
   getProfile() {
@@ -72,8 +76,34 @@ export default class extends Page {
       })
     })
   }
+
+  getClinics() {
+    fetch('/account/clinics', {
+      credentials: 'include'
+    })
+    .then(r => r.json())
+    .then(clinics => {
+      if (!clinics) return
+      console.log(JSON.stringify(clinics))
+      this.setState({
+        allClinics: clinics
+      })
+    })
+  }
   
   handleChange(event) {
+    if (event.target.name === "province") {
+      this.setState({
+        city: "",
+        clinicID: ""
+      })
+    }
+    else if (event.target.name === "city") {
+      this.setState({
+        clinicID: ""
+      })
+    }
+
     this.setState({
       [event.target.name]: event.target.value
     })
@@ -88,7 +118,7 @@ export default class extends Page {
       alertStyle: null
     })
     
-    if (!this.state.province || !this.state.city || !this.state.clinic || !this.state.user || !this.state.name || !this.state.email || !this.state.password || !this.state.confirmPassword) {
+    if (!this.state.province || !this.state.city || !this.state.clinicID || !this.state.type || !this.state.name || !this.state.email || !this.state.password || !this.state.confirmPassword) {
       this.setState({
         alertText: 'Please complete the form first',
         alertStyle: 'alert-danger',
@@ -106,10 +136,8 @@ export default class extends Page {
 
     const formData = {
       _csrf: await NextAuth.csrfToken(),
-      province: this.state.province,
-      city: this.state.city,
-      clinic: this.state.clinic,
-      user: this.state.user,
+      clinicID: this.state.clinicID,
+      type: this.state.type,
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
@@ -133,29 +161,14 @@ export default class extends Page {
     })
     .then(async res => {
       if (res.status === 200) {
-        this.getProfile()
-        this.setState({
-          alertText: 'Changes to your profile have been saved',
-          alertStyle: 'alert-success',
-        })
-        // Force update session so that changes to name or email are reflected
-        // immediately in the navbar (as we pass our session to it).
-        this.setState({
-          session: await NextAuth.init({force: true}), // Update session data
-        })
-      } else {
-        this.setState({
-          session: await NextAuth.init({force: true}), // Update session data
-          alertText: 'Failed to save changes to your profile',
-          alertStyle: 'alert-danger',
-        })
+        Router.push('/dashboard')
       }
     })
   }
   
   render() {
     if (this.state.isSignedIn === true) {
-      if (!this.state.isSignedUp) {
+      if (!this.props.session.user.signUpComplete) {
         const alert = (this.state.alertText === null) ? <div/> : <div className={`alert ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>
       
         return (
@@ -177,7 +190,10 @@ export default class extends Page {
                     <Label sm={2}>Select Province:</Label>
                     <Col sm={10} md={8}>
                       <Input type="select" name="province" value={this.state.province} onChange={this.handleChange}>
-                        <option value="BC">BC</option>
+                        <option value="">Select</option>
+                        {this.state.allClinics.map((e, key) => {
+                            return <option key={key} value={e.province}>{e.province}</option>;
+                        })}
                       </Input>
                     </Col>
                   </FormGroup>
@@ -185,15 +201,25 @@ export default class extends Page {
                     <Label sm={2}>Select City:</Label>
                     <Col sm={10} md={8}>
                       <Input type="select" name="city" value={this.state.city} onChange={this.handleChange}>
-                        <option value="Vancouver">Vancouver</option>
+                        <option value="">Select</option>
+                        {this.state.allClinics.map((e, key) => {
+                          if (e.province === this.state.province) {
+                            return <option key={key} value={e.city}>{e.city}</option>;
+                          }
+                        })}
                       </Input>
                     </Col>
                   </FormGroup>
                   <FormGroup row>
                     <Label sm={2}>Select Clinic:</Label>
                     <Col sm={10} md={8}>
-                      <Input type="select" name="clinic" value={this.state.clinic} onChange={this.handleChange}>
-                        <option value="Langara Clinic">Langara Clinic</option>
+                      <Input type="select" name="clinicID" value={this.state.clinicID} onChange={this.handleChange}>
+                        <option value="">Select</option>
+                        {this.state.allClinics.map((e, key) => {
+                          if (e.province === this.state.province && e.city === this.state.city) {
+                            return <option key={key} value={e._id}>{e.clinic}</option>;
+                          }
+                        })}
                       </Input>
                     </Col>
                   </FormGroup>
@@ -201,6 +227,7 @@ export default class extends Page {
                     <Label sm={2}>Select User:</Label>
                     <Col sm={10} md={8}>
                       <Input type="select" name="type" value={this.state.type} onChange={this.handleChange}>
+                        <option value="">Select</option>
                         <option value="doctor">Doctor</option>
                         <option value="patient">Patient</option>
                       </Input>

@@ -42,7 +42,7 @@ export default class extends React.Component {
 
     // Save current URL so user is redirected back here after signing in
     const cookies = new Cookies()
-    cookies.set('redirect_url', window.location.pathname, { path: '/' })
+    cookies.set('redirect_url', window.location.pathname, { path: '/dashboard' })
 
     // An object passed NextAuth.signin will be passed to your signin() function
     NextAuth.signin({

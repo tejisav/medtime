@@ -58,7 +58,7 @@ export default class extends Page {
     // If the user bounces off to link/unlink their account we want them to
     // land back here after signing in with the other service / unlinking.
     const cookies = new Cookies()
-    cookies.set('redirect_url', window.location.pathname, { path: '/' })
+    cookies.set('redirect_url', window.location.pathname, { path: '/dashboard' })
     
     this.getProfile()
   }

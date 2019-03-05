@@ -15,7 +15,7 @@ export default class extends React.Component {
     
     // If the user is signed in, we look for a redirect URL cookie and send 
     // them to that page, so that people signing in end up back on the page they
-    // were on before signing in. Defaults to '/'.
+    // were on before signing in. Defaults to '/dashboard'.
     let redirectTo = '/dashboard'
     if (session.user) {
       // Read redirect URL to redirect to from cookies

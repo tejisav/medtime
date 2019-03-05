@@ -3,6 +3,19 @@
  **/
 'use strict'
 
+const MongoClient = require('mongodb').MongoClient
+
+let usersCollection
+if (process.env.MONGO_URI) { 
+  // Connect to MongoDB Database and return user connection
+  MongoClient.connect(process.env.MONGO_URI, (err, mongoClient) => {
+    if (err) throw new Error(err)
+    const dbName = process.env.MONGO_URI.split('/').pop().split('?').shift()
+    const db = mongoClient.db(dbName)
+    usersCollection = db.collection('users')
+  })
+}
+
 module.exports = (expressApp, functions) => {
 
   if (expressApp === null) {
@@ -37,18 +50,12 @@ module.exports = (expressApp, functions) => {
       functions.find({id: req.user.id})
       .then(user => {
         if (!user) return res.status(500).json({error: 'Unable to fetch profile'})
-
-        if (req.body.province)
-          user.province = req.body.province
-          
-        if (req.body.city)
-          user.city = req.body.city
         
-        if (req.body.clinic)
-          user.clinic = req.body.clinic
+        if (req.body.clinicID)
+          user.clinicID = req.body.clinicID
           
-        if (req.body.user)
-          user.user = req.body.user
+        if (req.body.type)
+          user.type = req.body.type
 
         if (req.body.name)
           user.name = req.body.name
@@ -66,8 +73,7 @@ module.exports = (expressApp, functions) => {
         
         if (req.body.signUpComplete)
           user.signUpComplete = true
-
-        user.srcAvatar =  '//localhost:3000/static/image/tunganh.jpg'
+          
         if(req.body.src) {
           user.srcAvatar = req.body.src
         }
@@ -108,6 +114,33 @@ module.exports = (expressApp, functions) => {
       })
     } else {
       return res.status(403).json({error: 'Must be signed in to delete profile'})
+    }
+  })
+
+  // Expose a route to return clinic profile if logged in with a session
+  expressApp.get('/account/clinics', (req, res) => {
+    if (req.user) {
+      let result
+      return new Promise(function(resolve, reject) {
+        result = usersCollection
+        .find({ type: "clinic" })
+        
+        result.toArray((err, users) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(users)
+          }
+        })
+      })
+      .then(users => {
+        return res.json(users)
+      })
+      .catch(err => {
+        return res.status(500).json(err)
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in to get profile'})
     }
   })
 

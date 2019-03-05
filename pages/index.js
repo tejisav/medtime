@@ -29,6 +29,14 @@ export default class extends Page {
           Router.push('/signup')
         }
       }
+      
+      if (props.session.user.admin) {
+        if (req) {
+          res.redirect('/admin')
+        } else {
+          Router.push('/admin')
+        }
+      }
     }
     
     return props
