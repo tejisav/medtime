@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { NextAuth } from 'next-auth/client'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
+import SelectSearch from 'react-select-search'
 import Page from '../components/page'
 import Layout from '../components/layout'
 import Loader from '../components/loader'
@@ -26,6 +27,7 @@ export default class extends Page {
         <p className="lead text-muted ">
           Assign Patients to Doctor
         </p>
+        <Assign />
       </Layout>
     )
   }
@@ -78,7 +80,7 @@ export class Table extends React.Component {
 
   async updateData() {
     this.setState({
-      data: await User.list({
+      data: await User.unverifiedList({
           page: this.options.page,
           size: this.options.sizePerPage
         })
@@ -180,7 +182,7 @@ export class Table extends React.Component {
     if (typeof window === 'undefined')
       return (<p>This page requires JavaScript.</p>)
     
-    const alert = (this.state.alertText === null) ? <div/> : <div className={`alert ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>
+    const alert = (this.state.alertText === null) ? <div/> : <div className={`alert text-center ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>
 
     const data = (this.state.data && this.state.data.users) ? this.state.data.users : []
     const totalSize = (this.state.data && this.state.data.total) ? this.state.data.total : 0
@@ -209,5 +211,191 @@ export class Table extends React.Component {
         </p>
       </React.Fragment>
     )
+  }
+}
+
+export class Assign extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      updating: true,
+      alertText: null,
+      alertStyle: null,
+      doctors: [],
+      patients: [],
+      doctorSelected: "",
+      patientsSelected: []
+    }
+  }
+
+  async componentDidMount() {
+    this.setState({
+      updating: true
+    })
+    await this.updateData()
+    this.setState({
+      updating: false
+    })
+  }
+
+  async updateData() {
+    fetch(`/admin/users`, {
+      credentials: 'same-origin'
+    })
+    .then(response => {
+      if (response.ok) {
+        return Promise.resolve(response.json())
+      } else {
+        return Promise.reject(Error('HTTP error when trying to list users'))
+      }
+    })
+    .then(data => {
+      if (!data.users.length) {
+        return
+      }
+
+      let docs = [], pats = []
+      data.users.forEach(function (user) {
+        if (user.type === "doctor") {
+          docs.push({ name: user.name, value: user._id, photo: user.srcAvatar, patients: user.patients ? user.patients.split(',') : [] })
+        } else if (user.type === "patient") {
+          pats.push({ name: user.name, value: user._id, photo: user.srcAvatar })
+        }
+      })
+      this.setState({
+        doctors: docs.length ? docs : [],
+        doctorSelected: docs.length && docs[0].value ? docs[0].value : "",
+        patients: pats.length ? pats : [],
+        patientsSelected: docs.length && docs[0].patients ? docs[0].patients : []
+      })
+    })
+    .catch(() => Promise.reject(Error('Error trying to list users')))
+  }
+
+  changeDoctor(value) {
+    this.setState({
+      doctorSelected: value.value,
+      patientsSelected: value.patients.length ? value.patients : []
+    })
+  }
+
+  async assignPatients() {
+
+    this.setState({
+      alertText: null,
+      alertStyle: null,
+      updating: true
+    })
+
+    const data = {
+      _csrf: await NextAuth.csrfToken(),
+      doctorID: this.state.doctorSelected,
+      patients: this.state.patientsSelected
+    }
+
+    const encodedData = Object.keys(data).map((key) => {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(data[key])
+    }).join('&')
+    
+    fetch('/admin/assign', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: encodedData
+    })
+    .then(async res => {
+      if (res.status === 200) {
+        this.setState({
+          alertText: `Patients successfully assigned`,
+          alertStyle: 'alert-success',
+          updating: false
+        })
+        this.updateData()
+      } else {
+        this.setState({
+          alertText: `Failed to assign patients`,
+          alertStyle: 'alert-danger',
+          updating: false
+        })
+      }
+    })
+  }
+
+  renderDoctors(option) {
+    const imgStyle = {
+      borderRadius: '50%',
+      verticalAlign: 'middle',
+      marginRight: 10,
+    };
+  
+    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
+  }
+
+  renderPatients(option, state) {
+    if (state.value !== this.state.patientsSelected) {
+      state.value = this.state.patientsSelected
+    
+      this.forceUpdate()
+    }
+    const imgStyle = {
+      borderRadius: '50%',
+      verticalAlign: 'middle',
+      marginRight: 10,
+    };
+  
+    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
+  }
+
+  render() {
+    if (this.state.doctors.length > 0 && this.state.patients.length > 0 && !this.state.updating) {
+      
+      const alert = (this.state.alertText === null) ? <div/> : <div className={`alert text-center ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>
+    
+      return (
+        <React.Fragment>
+          {alert}
+          <div className="d-flex justify-content-center">
+            <SelectSearch
+              name="doctors"
+              value={this.state.doctorSelected}
+              height={172}
+              options={this.state.doctors}
+              placeholder="Search doctors"
+              onChange={this.changeDoctor.bind(this)}
+              renderOption={this.renderDoctors}
+            />
+          </div>
+          <div className="d-flex justify-content-center">
+            <SelectSearch
+              name="patients"
+              multiple
+              value={this.state.patientsSelected}
+              height={172}
+              options={this.state.patients}
+              placeholder="Search patients"
+              renderOption={this.renderPatients.bind(this)}
+            />
+          </div>
+          <div className="d-flex justify-content-center">
+            <button type="button" onClick={this.assignPatients.bind(this)} className="btn btn-primary">
+              Update
+            </button>
+          </div>
+      </React.Fragment>
+      )
+    } else if (this.state.updating) {
+      return (
+        <Loader/>
+      )
+    } else {
+      return (
+        <p className="text-center">
+          No patients or doctors to assign
+        </p>
+      )
+    }
   }
 }

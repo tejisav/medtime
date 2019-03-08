@@ -1,11 +1,3 @@
-/**
- * Defines an endpoint that returns a list of users. You must be signed in and
- * have "admin": true set in your profile to be able to call the /admin/users
- * end point (you will need to configure persistant Mongo database to do that).
- *
- * Note: These routes only work if you have actually configured a MONGO_URI!
- * They do not work if you are using the fallback in-memory database.
- **/
 'use strict'
 
 const MongoClient = require('mongodb').MongoClient
@@ -27,7 +19,7 @@ module.exports = (expressApp, functions) => {
     throw new Error('expressApp option must be an express server instance')
   }
 
-  expressApp.get('/admin/users', (req, res) => {
+  expressApp.get('/admin/unverified', (req, res) => {
     // Check user is logged in and has admin access
     if (!req.user || !req.user.admin || req.user.admin !== true)
       return res.status('403').end()
@@ -118,6 +110,60 @@ module.exports = (expressApp, functions) => {
       })
     } else {
       return res.status(403).json({error: 'Must be signed in with clinic account to delete doctors'})
+    }
+  })
+
+  expressApp.get('/admin/users', (req, res) => {
+    // Check user is logged in and has admin access
+    if (!req.user || !req.user.admin || req.user.admin !== true)
+      return res.status('403').end()
+    
+    let response = {
+      users: []
+    }
+    
+    let result
+    return new Promise(function(resolve, reject) {
+      result = usersCollection
+      .find({ $or: [ { $and: [ { type: "doctor" }, { clinicVerified: { $exists: true } }, { clinicVerified: { $ne: false } } ] }, { type: "patient" } ], clinicID: req.user.id.toString() })
+      
+      result.toArray((err, users) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(users)
+        }
+      })
+    })
+    .then(users => {
+      response.users = users
+      return res.json(response)
+    })
+    .catch(err => {
+      return res.status(500).json(err)
+    })
+    
+  })
+
+  // Expose a route to assign patients to doctors
+  expressApp.post('/admin/assign', (req, res) => {
+    if (req.user && req.user.admin && req.user.admin === true) {
+      functions.find({id: req.body.doctorID})
+      .then(user => {
+        if (!user) return res.status(500).json({error: 'Unable to fetch doctor'})
+        
+        user.patients = req.body.patients
+
+        return functions.update(user)
+      })
+      .then(() => {
+        return res.json({ok: true})
+      })
+      .catch(err => {
+        return res.status(500).json({error: 'Unable to verify doctor'})
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in with clinic account to verify doctors'})
     }
   })
 

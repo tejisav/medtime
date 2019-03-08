@@ -7,11 +7,11 @@ import fetch from 'isomorphic-fetch'
 
 export default class {
   
-  static async list({
+  static async unverifiedList({
     page = 0,
     size = 10
   } = {}) {
-    return fetch(`/admin/users?page=${page}&size=${size}`, {
+    return fetch(`/admin/unverified?page=${page}&size=${size}`, {
       credentials: 'same-origin'
     })
     .then(response => {
