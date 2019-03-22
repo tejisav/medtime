@@ -5,7 +5,9 @@ import Link from 'next/link'
 import { Container, Row, Col, Nav, NavItem, Button, Form, NavLink, Collapse,
          Navbar, NavbarToggler, NavbarBrand, Modal, ModalHeader, ModalBody,
          ModalFooter, ListGroup, ListGroupItem } from 'reactstrap'
+import SelectSearch from 'react-select-search'
 import Signin from './signin'
+import Loader from './loader'
 import { NextAuth } from 'next-auth/client'
 import Cookies from 'universal-cookie'
 import Package from '../package'
@@ -68,30 +70,7 @@ export default class extends React.Component {
           <input className="nojs-navbar-check" id="nojs-navbar-check" type="checkbox" aria-label="Menu"/>
           <label tabIndex="1" htmlFor="nojs-navbar-check" className="nojs-navbar-label mt-2" />
           <div className="nojs-navbar">
-            {/* <Nav navbar>
-              <div tabIndex="1" className="dropdown nojs-dropdown">
-                <div className="nav-item">
-                  <span className="dropdown-toggle nav-link">Examples</span>
-                </div>
-                <div className="dropdown-menu">
-                  <Link prefetch href="/examples/authentication">
-                    <a href="/examples/authentication" className="dropdown-item">Auth</a>
-                  </Link>
-                  <Link prefetch href="/examples/async">
-                    <a href="/examples/async" className="dropdown-item">Async Data</a>
-                  </Link>
-                  <Link prefetch href="/examples/layout">
-                    <a href="/examples/layout" className="dropdown-item">Layout</a>
-                  </Link>
-                  <Link prefetch href="/examples/routing">
-                    <a href="/examples/routing" className="dropdown-item">Routing</a>
-                  </Link>
-                  <Link prefetch href="/examples/styling">
-                    <a href="/examples/styling" className="dropdown-item">Styling</a>
-                  </Link>
-                </div>
-              </div>
-            </Nav> */}
+            <SelectUser session={this.props.session}/>
             <UserMenu session={this.props.session} toggleModal={this.toggleModal} signinBtn={this.props.signinBtn}/>
           </div>
         </Navbar>
@@ -164,6 +143,195 @@ export class MainBody extends React.Component {
   }
 }
 
+const waitFor = (ms) => new Promise(r => setTimeout(r, ms))
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
+
+export class SelectUser extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      updating: true,
+      allDoctors: [],
+      patientIds: [],
+      allPatients: [],
+      doctors: [],
+      patients: [],
+      selectedUser: ""
+    }
+  }
+
+  async componentDidMount() {
+    this.setState({
+      updating: true
+    })
+    if (this.props.session.user) {
+      this.setState({
+        selectedUser: this.props.session.user.selectedUser ? this.props.session.user.selectedUser : ""
+      })
+      await this.updateData()
+    }
+    this.setState({
+      updating: false
+    })
+  }
+
+  async updateData() {
+    fetch(`/account/users`, {
+      credentials: 'same-origin'
+    })
+    .then(response => {
+      if (response.ok) {
+        return Promise.resolve(response.json())
+      } else {
+        return Promise.reject(Error('HTTP error when trying to list users'))
+      }
+    })
+    .then(async data => {
+      if (!data.users.length) {
+        return
+      }
+
+      let docs = [], pats = []
+      await asyncForEach(data.users, async function (user) {
+        await waitFor(50)
+        if (user.type === "doctor") {
+          if (this.props.session.user.type === "doctor" && this.props.session.user.id === user._id) {
+            this.setState({
+              patientIds: user.patients ? user.patients.split(',') : []
+            })
+          }
+          docs.push({ name: user.name, value: user._id, photo: user.srcAvatar, patients: user.patients ? user.patients.split(',') : [] })
+        } else if (user.type === "patient") {
+          pats.push({ name: user.name, value: user._id, photo: user.srcAvatar })
+        }
+      }.bind(this))
+      this.setState({
+        allDoctors: docs.length ? docs : [],
+        allPatients: pats.length ? pats : []
+      })
+      if (this.props.session.user.type === "doctor") {
+        await this.updatePatients()
+      } else if (this.props.session.user.type === "patient") {
+        await this.updateDoctors()
+      }
+    })
+    .catch(() => Promise.reject(Error('Error trying to list users')))
+  }
+
+  async updatePatients() {
+    this.setState({
+      patients: this.state.allPatients.filter(patient => this.state.patientIds.includes(patient.value))
+    })
+  }
+
+  async updateDoctors() {
+    this.setState({
+      doctors: this.state.allDoctors.filter(doctor => doctor.patients.includes(this.props.session.user.id))
+    })
+  }
+
+  changeSelectedUser(value) {
+    this.setState({
+      selectedUser: value.value
+    })
+  }
+
+  async updateSelectedUser() {
+
+    if (!this.state.selectedUser || this.state.selectedUser === this.props.session.user.selectedUser) {
+      return
+    }
+    
+    const data = {
+      _csrf: await NextAuth.csrfToken(),
+      selectedUser: this.state.selectedUser
+    }
+
+    const encodedData = Object.keys(data).map((key) => {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(data[key])
+    }).join('&')
+    
+    fetch('/account/selected', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: encodedData
+    })
+    .then(async res => {
+      if (res.status === 200) {
+        console.log('Selected user updated')
+      } else {
+        console.log('Selected user update failed')
+      }
+    })
+  }
+
+  renderUsers(option) {
+    const imgStyle = {
+      borderRadius: '50%',
+      verticalAlign: 'middle',
+      marginRight: 10,
+    };
+  
+    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo ? option.photo : "//localhost:3000/static/image/default.jpg"} /><span>{option.name}</span></span>);
+  }
+   
+  render() {
+    if (this.props.session && this.props.session.user && !this.props.session.user.admin && !this.state.updating) {
+      if (this.state.doctors.length > 0) {
+        return (
+          <React.Fragment>
+            <SelectSearch
+              name="users"
+              value={this.state.selectedUser}
+              height={172}
+              options={this.state.doctors}
+              placeholder="Search users"
+              onChange={this.changeSelectedUser.bind(this)}
+              renderOption={this.renderUsers}
+            />
+            <Button color="primary" onClick={this.updateSelectedUser.bind(this)}>Select</Button>
+          </React.Fragment>
+        )
+      } else if (this.state.patients.length > 0) {
+        return (
+          <React.Fragment>
+            <SelectSearch
+              name="users"
+              value={this.state.selectedUser}
+              height={172}
+              options={this.state.patients}
+              placeholder="Search users"
+              onChange={this.changeSelectedUser.bind(this)}
+              renderOption={this.renderUsers}
+            />
+            <Button color="primary" onClick={this.updateSelectedUser.bind(this)}>Select</Button>
+          </React.Fragment>
+        )
+      } else {
+        return (
+          <div />
+        )
+      }
+    } else if (this.state.updating) {
+      return (
+        <Loader/>
+      )
+    } else {
+      return (
+        <div />
+      )
+    }
+  }
+}
+
 export class UserMenu extends React.Component {
   constructor(props) {
     super(props)
@@ -202,6 +370,7 @@ export class UserMenu extends React.Component {
               <Link prefetch href="/account">
                 <a href="/account" className="dropdown-item"><span className="icon ion-md-person mr-1"></span> Your Account</a>
               </Link>
+              <UserMenuItem {...this.props}/>
               <AdminMenuItem {...this.props}/>
               <div className="dropdown-divider d-none d-md-block"/>
               <div className="dropdown-item p-0">
@@ -231,6 +400,22 @@ export class UserMenu extends React.Component {
           </NavItem>
         </Nav>
       )
+    }
+  }
+}
+
+export class UserMenuItem extends React.Component {
+  render() {
+    if (this.props.session.user && !this.props.session.user.admin) {
+      return (
+        <React.Fragment>
+          <Link prefetch href="/reports">
+            <a href="/reports" className="dropdown-item"><span className="icon ion-md-person mr-1"></span> Reports</a>
+          </Link>
+        </React.Fragment>
+      )
+    } else {
+      return(<div/>)
     }
   }
 }

@@ -144,4 +144,58 @@ module.exports = (expressApp, functions) => {
     }
   })
 
+  expressApp.get('/account/users', (req, res) => {
+    // Check user is logged in and has admin access
+    if (!req.user)
+      return res.status('403').end()
+    
+    let response = {
+      users: []
+    }
+    
+    let result
+    return new Promise(function(resolve, reject) {
+      result = usersCollection
+      .find({ $or: [ { $and: [ { type: "doctor" }, { clinicVerified: { $exists: true } }, { clinicVerified: { $ne: false } } ] }, { type: "patient" } ], clinicID: req.user.clinicID.toString() })
+      
+      result.toArray((err, users) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(users)
+        }
+      })
+    })
+    .then(users => {
+      response.users = users
+      return res.json(response)
+    })
+    .catch(err => {
+      return res.status(500).json(err)
+    })
+    
+  })
+
+  // Expose a route to assign patients to doctors
+  expressApp.post('/account/selected', (req, res) => {
+    if (req.user) {
+      functions.find({id: req.user.id})
+      .then(user => {
+        if (!user) return res.status(500).json({error: 'Unable to fetch user'})
+        
+        user.selectedUser = req.body.selectedUser
+
+        return functions.update(user)
+      })
+      .then(() => {
+        return res.json({ok: true})
+      })
+      .catch(err => {
+        return res.status(500).json({error: 'Unable to update selectedUser'})
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in to select users'})
+    }
+  })
+
 }

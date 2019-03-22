@@ -8,7 +8,7 @@ import Page from '../components/page'
 import Layout from '../components/layout'
 import Cookies from 'universal-cookie'
 import ReactCrop from 'react-image-crop'
-import 'react-image-crop/dist/ReactCrop.css';
+
 export default class extends Page {
 
   static async getInitialProps({req}) {
@@ -235,7 +235,7 @@ export default class extends Page {
                   <FormGroup row>
                     <Label sm={2}>Avatar:</Label>
                     <Col sm={10} md={8}>
-                      <img width="100" height="100" src={this.state.srcAvatar} />
+                      <img width="100" height="100" src={this.state.srcAvatar ? this.state.srcAvatar : "//localhost:3000/static/image/default.jpg"} />
                       <input type="file" onChange={this.onSelectFile} />
                         {src && (
                           <ReactCrop src={src} crop={this.state.crop}

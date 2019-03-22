@@ -113,38 +113,6 @@ module.exports = (expressApp, functions) => {
     }
   })
 
-  expressApp.get('/admin/users', (req, res) => {
-    // Check user is logged in and has admin access
-    if (!req.user || !req.user.admin || req.user.admin !== true)
-      return res.status('403').end()
-    
-    let response = {
-      users: []
-    }
-    
-    let result
-    return new Promise(function(resolve, reject) {
-      result = usersCollection
-      .find({ $or: [ { $and: [ { type: "doctor" }, { clinicVerified: { $exists: true } }, { clinicVerified: { $ne: false } } ] }, { type: "patient" } ], clinicID: req.user.id.toString() })
-      
-      result.toArray((err, users) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(users)
-        }
-      })
-    })
-    .then(users => {
-      response.users = users
-      return res.json(response)
-    })
-    .catch(err => {
-      return res.status(500).json(err)
-    })
-    
-  })
-
   // Expose a route to assign patients to doctors
   expressApp.post('/admin/assign', (req, res) => {
     if (req.user && req.user.admin && req.user.admin === true) {

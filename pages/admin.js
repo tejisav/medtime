@@ -241,7 +241,7 @@ export class Assign extends React.Component {
   }
 
   async updateData() {
-    fetch(`/admin/users`, {
+    fetch(`/account/users`, {
       credentials: 'same-origin'
     })
     .then(response => {
@@ -331,7 +331,7 @@ export class Assign extends React.Component {
       marginRight: 10,
     };
   
-    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
+    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo ? option.photo : "//localhost:3000/static/image/default.jpg"} /><span>{option.name}</span></span>);
   }
 
   renderPatients(option, state) {
@@ -346,7 +346,7 @@ export class Assign extends React.Component {
       marginRight: 10,
     };
   
-    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
+    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo ? option.photo : "//localhost:3000/static/image/default.jpg"} /><span>{option.name}</span></span>);
   }
 
   render() {

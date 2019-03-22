@@ -189,7 +189,10 @@ module.exports = () => {
               email: user.email,
               emailVerified: user.emailVerified,
               admin: user.admin || false,
-              signUpComplete: user.signUpComplete
+              signUpComplete: user.signUpComplete,
+              type: user.type,
+              clinicID: user.clinicID || user._id,
+              selectedUser: user.selectedUser || ''
             })
           })
         })
