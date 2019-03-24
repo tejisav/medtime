@@ -192,6 +192,7 @@ module.exports = () => {
               signUpComplete: user.signUpComplete,
               type: user.type,
               clinicID: user.clinicID || user._id,
+              clinicVerified: user.clinicVerified || false,
               selectedUser: user.selectedUser || ''
             })
           })

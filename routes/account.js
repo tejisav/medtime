@@ -3,9 +3,13 @@
  **/
 'use strict'
 
+const fs = require('fs-extra')
 const MongoClient = require('mongodb').MongoClient
+const MongoObjectId = (process.env.MONGO_URI) ? require('mongodb').ObjectId : (id) => { return id }
+const multer = require('multer')
+const upload = multer( { limits: {fileSize: 2000000 }, dest:'./uploads/' } )
 
-let usersCollection
+let usersCollection, reportsCollection
 if (process.env.MONGO_URI) { 
   // Connect to MongoDB Database and return user connection
   MongoClient.connect(process.env.MONGO_URI, (err, mongoClient) => {
@@ -13,6 +17,7 @@ if (process.env.MONGO_URI) {
     const dbName = process.env.MONGO_URI.split('/').pop().split('?').shift()
     const db = mongoClient.db(dbName)
     usersCollection = db.collection('users')
+    reportsCollection = db.collection('reports')
   })
 }
 
@@ -195,6 +200,69 @@ module.exports = (expressApp, functions) => {
       })
     } else {
       return res.status(403).json({error: 'Must be signed in to select users'})
+    }
+  })
+
+  expressApp.post('/account/upload', upload.single('report'), (req, res) => {
+    if (req.user) {
+      if (req.file == null) {
+        return res.status(500).json({error: 'No file found to upload!'})
+      } else {
+        let img = fs.readFileSync(req.file.path);
+        let encImg = img.toString('base64');
+        let report = {
+          contentType: req.file.mimetype,
+          img: Buffer.from(encImg, 'base64'),
+          dateAdded: new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        }
+        if (req.user.type === "doctor" && req.user.clinicVerified && req.user.selectedUser) {
+          report.doctorID = req.user.id.toString()
+          report.patientID = req.user.selectedUser
+        } else {
+          return res.status(403).json({error: 'Not enough permissions!'})
+        }
+        reportsCollection
+        .insertOne(report, function(err, result) {
+          if (err) { console.log(err) }
+          fs.remove(req.file.path, function(err) {
+            if (err) { console.log(err) }
+            return res.redirect(`/reports`)
+          })
+        })
+      }
+    } else {
+      return res.status(403).json({error: 'Must be signed in to upload reports'})
+    }
+  })
+
+  expressApp.get('/image/:id', (req, res) => {
+    if (req.user) {
+      reportsCollection.findOne({ _id: MongoObjectId(req.params.id) }, (err, results) => {
+        if (err) { console.log(err) }
+        res.setHeader('content-type', results.contentType)
+        res.send(results.img.buffer)
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in to get images'})
+    }
+  })
+
+  expressApp.get('/account/reports', (req, res) => {
+    if (req.user) {
+      let query = {}
+      if (req.user.type === "doctor" && req.user.clinicVerified && req.user.selectedUser) {
+        query = { doctorID: req.user.id.toString(), patientID: req.user.selectedUser }
+      } else if (req.user.type === "patient" && req.user.selectedUser) {
+        query = { patientID: req.user.id.toString(), doctorID: req.user.selectedUser }
+      } else {
+        return res.status(500).json({error: 'User not selected'})
+      }
+      reportsCollection.find(query).project({ dateAdded: 1 }).sort({_id:-1}).toArray(function(err, items) {
+        if (err) { console.log(err) }
+        return res.json(items)
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in to get reports'})
     }
   })
 

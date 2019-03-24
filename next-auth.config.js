@@ -44,6 +44,7 @@ module.exports = () => {
     return new Promise((resolve, reject) => {    
       // This is the config block we return, ready to be passed to NextAuth
       resolve({
+        csrf: false,
         // Define a port (if none passed, will not start Express)
         // Note: This project omits a port for NextAuth as it uses Express to
         // add additional routes for the examples, so it takes control of

@@ -60,7 +60,7 @@ export default class extends React.Component {
             </Col>
             <Col xs={12} md={6}>
               <Form id="signin" method="post" action="/auth/email/signin" onSubmit={this.handleSubmit}>
-                <Input name="_csrf" type="hidden" value={this.state.session.csrfToken}/>
+                {/* <Input name="_csrf" type="hidden" value={this.state.session.csrfToken}/> */}
                 <p>
                   <Label htmlFor="email">Email address</Label><br/>
                   <Input name="email" disabled={this.state.submitting} type="text" placeholder="j.smith@example.com" id="email" className="form-control" value={this.state.email} onChange={this.handleEmailChange}/>

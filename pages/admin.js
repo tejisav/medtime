@@ -95,7 +95,7 @@ export class Table extends React.Component {
     })
 
     const data = {
-      _csrf: await NextAuth.csrfToken(),
+      // _csrf: await NextAuth.csrfToken(),
       id: row._id
     }
 
@@ -134,7 +134,7 @@ export class Table extends React.Component {
     })
 
     const data = {
-      _csrf: await NextAuth.csrfToken(),
+      // _csrf: await NextAuth.csrfToken(),
       id: row._id
     }
 
@@ -290,7 +290,7 @@ export class Assign extends React.Component {
     })
 
     const data = {
-      _csrf: await NextAuth.csrfToken(),
+      // _csrf: await NextAuth.csrfToken(),
       doctorID: this.state.doctorSelected,
       patients: this.state.patientsSelected
     }

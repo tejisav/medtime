@@ -135,7 +135,7 @@ export default class extends Page {
     }
 
     const formData = {
-      _csrf: await NextAuth.csrfToken(),
+      // _csrf: await NextAuth.csrfToken(),
       clinicID: this.state.clinicID,
       type: this.state.type,
       name: this.state.name,
@@ -185,7 +185,7 @@ export default class extends Page {
             <Row className="mt-4">
               <Col xs="12" md="8" lg="9">
                 <Form method="post" action="/account/user" onSubmit={this.onSubmit}>
-                  <Input name="_csrf" type="hidden" value={this.state.session.csrfToken} onChange={()=>{}}/>
+                  {/* <Input name="_csrf" type="hidden" value={this.state.session.csrfToken} onChange={()=>{}}/> */}
                   <FormGroup row>
                     <Label sm={2}>Select Province:</Label>
                     <Col sm={10} md={8}>
@@ -281,7 +281,7 @@ export default class extends Page {
                   You can sign up again at any time.
                 </p>
                 <Form id="signout" method="post" action="/account/delete">
-                  <input name="_csrf" type="hidden" value={this.state.session.csrfToken}/>
+                  {/* <input name="_csrf" type="hidden" value={this.state.session.csrfToken}/> */}
                   <Button type="submit" color="outline-danger"><span className="icon ion-md-trash mr-1"></span> Delete Account</Button>
                 </Form>
               </Col>
@@ -336,7 +336,7 @@ export class LinkAccount extends React.Component {
     if (this.props.linked === true) {
       return (
         <form method="post" action={`/auth/oauth/${this.props.provider.toLowerCase()}/unlink`}>
-          <input name="_csrf" type="hidden" value={this.props.session.csrfToken}/>
+          {/* <input name="_csrf" type="hidden" value={this.props.session.csrfToken}/> */}
           <p>
             <button className="btn btn-block btn-outline-danger" type="submit">
               Unlink from {this.props.provider}

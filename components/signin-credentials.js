@@ -69,7 +69,7 @@ export default class extends React.Component {
                 <h4 className="card-header">Credentials</h4>
                 <div className="card-body pb-0">
                   <form id="signin" method="post" action="/auth/signin" onSubmit={this.handleSignInSubmit}>
-                    <input name="_csrf" type="hidden" value={this.state.session.csrfToken}/>
+                    {/* <input name="_csrf" type="hidden" value={this.state.session.csrfToken}/> */}
                     <p>
                       <label htmlFor="email">Email address</label><br/>
                       <input name="email" type="text" placeholder="j.smith@example.com" id="email" className="form-control" value={this.state.email} onChange={this.handleEmailChange}/>

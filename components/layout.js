@@ -249,7 +249,7 @@ export class SelectUser extends React.Component {
     }
     
     const data = {
-      _csrf: await NextAuth.csrfToken(),
+      // _csrf: await NextAuth.csrfToken(),
       selectedUser: this.state.selectedUser
     }
 
@@ -267,6 +267,7 @@ export class SelectUser extends React.Component {
     .then(async res => {
       if (res.status === 200) {
         console.log('Selected user updated')
+        Router.push('/dashboard')
       } else {
         console.log('Selected user update failed')
       }
@@ -375,7 +376,7 @@ export class UserMenu extends React.Component {
               <div className="dropdown-divider d-none d-md-block"/>
               <div className="dropdown-item p-0">
                 <Form id="signout" method="post" action="/auth/signout" onSubmit={this.handleSignoutSubmit}>
-                  <input name="_csrf" type="hidden" value={this.props.session.csrfToken}/>
+                  {/* <input name="_csrf" type="hidden" value={this.props.session.csrfToken}/> */}
                   <Button type="submit" block className="pl-4 rounded-0 text-left dropdown-item"><span className="icon ion-md-log-out mr-1"></span> Sign out</Button>
                 </Form>
               </div>
