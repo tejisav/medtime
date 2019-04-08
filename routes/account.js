@@ -1,6 +1,3 @@
-/**
- * Example account management routes
- **/
 'use strict'
 
 const fs = require('fs-extra')
@@ -9,15 +6,15 @@ const MongoObjectId = (process.env.MONGO_URI) ? require('mongodb').ObjectId : (i
 const multer = require('multer')
 const upload = multer( { limits: {fileSize: 2000000 }, dest:'./uploads/' } )
 
-let usersCollection, reportsCollection
-if (process.env.MONGO_URI) { 
-  // Connect to MongoDB Database and return user connection
+let usersCollection, reportsCollection, schedulesCollection
+if (process.env.MONGO_URI) {
   MongoClient.connect(process.env.MONGO_URI, (err, mongoClient) => {
     if (err) throw new Error(err)
     const dbName = process.env.MONGO_URI.split('/').pop().split('?').shift()
     const db = mongoClient.db(dbName)
     usersCollection = db.collection('users')
     reportsCollection = db.collection('reports')
+    schedulesCollection = db.collection('schedules')
   })
 }
 
@@ -263,6 +260,136 @@ module.exports = (expressApp, functions) => {
       })
     } else {
       return res.status(403).json({error: 'Must be signed in to get reports'})
+    }
+  })
+
+  expressApp.post('/account/schedule', (req, res) => {
+    if (req.user && req.user.type === "doctor" && req.user.clinicVerified) {
+      if (req.user.selectedUser) {
+        if (req.body.medicines.length > 0 && req.body.events.length > 0) {
+          let first = new Date(new Date().toDateString())
+          first.setDate(first.getDate() - 1);
+          schedulesCollection.update(
+            { doctorID: req.user.id.toString(), patientID: req.user.selectedUser },
+            {
+              doctorID: req.user.id.toString(),
+              patientID: req.user.selectedUser,
+              startDate: req.body.startDate,
+              endDate: req.body.endDate,
+              medicines: req.body.medicines,
+              events: req.body.events,
+              improvement: {[first.toISOString().split('T')[0]]: 0}
+            },
+            { upsert: true }
+          )
+          .then(() => {
+            return res.json({ok: true})
+          })
+          .catch(err => {
+            return res.status(500).json({error: 'Unable to add schedule'})
+          })
+        } else {
+          return res.status(500).json({error: 'Invalid data'})
+        }
+      } else {
+        return res.status(500).json({error: 'User not selected'})
+      }
+    } else {
+      return res.status(403).json({error: 'Must be signed in with verified doctor account to add schedule'})
+    }
+  })
+
+  expressApp.get('/account/schedule', (req, res) => {
+    if (req.user) {
+      let query = {}
+      if (req.user.type === "doctor" && req.user.clinicVerified && req.user.selectedUser) {
+        query = { doctorID: req.user.id.toString(), patientID: req.user.selectedUser }
+      } else if (req.user.type === "patient" && req.user.selectedUser) {
+        query = { patientID: req.user.id.toString(), doctorID: req.user.selectedUser }
+      } else {
+        return res.status(500).json({error: 'User not selected'})
+      }
+      schedulesCollection.findOne(query, { fields: { events: 1, _id: 0 } }, (err, results) => {
+        if (err) { console.log(err) }
+        return res.json(results)
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in to get schedule'})
+    }
+  })
+
+  expressApp.post('/account/event', (req, res) => {
+    if (req.user) {
+      
+      let query = {}
+      if (req.user.type === "doctor" && req.user.clinicVerified && req.user.selectedUser) {
+        query = { doctorID: req.user.id.toString(), patientID: req.user.selectedUser }
+      } else if (req.user.type === "patient" && req.user.selectedUser) {
+        query = { patientID: req.user.id.toString(), doctorID: req.user.selectedUser }
+      } else {
+        return res.status(500).json({error: 'User not selected'})
+      }
+
+      if (req.body.event) {
+        schedulesCollection
+        .updateOne( { ...query, "events.id": req.body.event.id}, { $set: { "events.$.completed" : true } } )
+        .then(() => {
+          return res.json({ok: true})
+        })
+        .catch(err => {
+          return res.status(500).json({error: 'Unable to update status'})
+        })
+      } else {
+        return res.status(500).json({error: 'Invalid data'})
+      }
+    } else {
+      return res.status(403).json({error: 'Must be signed in to update status'})
+    }
+  })
+
+  expressApp.get('/account/improvement', (req, res) => {
+    if (req.user) {
+      let query = {}
+      if (req.user.type === "doctor" && req.user.clinicVerified && req.user.selectedUser) {
+        query = { doctorID: req.user.id.toString(), patientID: req.user.selectedUser }
+      } else if (req.user.type === "patient" && req.user.selectedUser) {
+        query = { patientID: req.user.id.toString(), doctorID: req.user.selectedUser }
+      } else {
+        return res.status(500).json({error: 'User not selected'})
+      }
+      schedulesCollection.findOne(query, { fields: { startDate: 1, endDate: 1, improvement: 1, _id: 0 } }, (err, results) => {
+        if (err) { console.log(err) }
+        return res.json(results)
+      })
+    } else {
+      return res.status(403).json({error: 'Must be signed in to get improvement data'})
+    }
+  })
+
+  expressApp.post('/account/improvement', (req, res) => {
+    if (req.user) {
+      
+      let query = {}
+      if (req.user.type === "patient" && req.user.selectedUser) {
+        query = { patientID: req.user.id.toString(), doctorID: req.user.selectedUser }
+      } else {
+        return res.status(500).json({error: 'User not selected'})
+      }
+
+      if (req.body) {
+        schedulesCollection
+        .updateOne( query, { $set: { improvement: req.body} } )
+        .then(() => {
+          return res.json({ok: true})
+        })
+        .catch(err => {
+          return res.status(500).json({error: 'Unable to submit feedback'})
+        })
+      } else {
+        return res.status(500).json({error: 'Invalid data'})
+      }
+    } else {
+      return res.status(403).json({error: 'Must be signed in to update status'})
     }
   })
 

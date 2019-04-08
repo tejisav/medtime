@@ -16,7 +16,7 @@ export default class extends Page {
   render() {
     if (this.props.action == 'signin' && this.props.type == 'oauth') {
       return(
-        <Layout {...this.props} navmenu={false}>
+        <Layout {...this.props}>
           <div className="text-center mb-5">
             <h1 className="display-4 mt-5 mb-3">Unable to sign in</h1>
             <p className="lead">An account associated with your email address already exists.</p>
@@ -45,7 +45,7 @@ export default class extends Page {
       )
     } else if (this.props.action == 'signin' && this.props.type == 'token-invalid') {
       return(
-        <Layout {...this.props} navmenu={false}>
+        <Layout {...this.props}>
           <div className="text-center mb-5">
             <h1 className="display-4 mt-5 mb-2">Link not valid</h1>
             <p className="lead">This sign in link is no longer valid.</p>
@@ -55,7 +55,7 @@ export default class extends Page {
       )
     } else {
       return(
-        <Layout {...this.props} navmenu={false}>
+        <Layout {...this.props}>
           <div className="text-center mb-5">
             <h1 className="display-4 mt-5">Error signing in</h1>
             <p className="lead">An error occured while trying to sign in.</p>

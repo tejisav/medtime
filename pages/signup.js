@@ -172,7 +172,7 @@ export default class extends Page {
         const alert = (this.state.alertText === null) ? <div/> : <div className={`alert ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>
       
         return (
-          <Layout {...this.props} navmenu={false}>
+          <Layout {...this.props}>
             <Row className="mb-1">
               <Col xs="12">
                 <h1 className="display-2">Complete Signup</h1>
@@ -290,7 +290,7 @@ export default class extends Page {
         )
       } else {
         return (
-          <Layout {...this.props} navmenu={false}>
+          <Layout {...this.props}>
             <Row>
               <Col xs="12" className="text-center pt-5 pb-5">
                 <p className="lead m-0">
@@ -303,7 +303,7 @@ export default class extends Page {
       }
     } else {
       return (
-        <Layout {...this.props} navmenu={false}>
+        <Layout {...this.props}>
           <Row>
             <Col xs="12" className="text-center pt-5 pb-5">
               <p className="lead m-0">

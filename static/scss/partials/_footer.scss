@@ -1,0 +1,30 @@
+footer{
+    nav
+    {
+        background-color:$main-background-color;
+        
+        a {
+            color:$main-text-color;
+        }
+
+
+    }
+
+    .social-nav
+    {
+        // padding: 5px;
+        display: grid;
+        grid-template-columns: 50px 50px 50px;
+        
+
+        .nav-item
+        {
+             .nav-link
+            {
+                // background-color: red;
+                color: $main-text-color; 
+                font-size: 20px;
+            }
+        } 
+    }
+}

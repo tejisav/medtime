@@ -1,0 +1,72 @@
+main
+{
+  padding: 5rem;
+    .container
+    {
+        .heading-contact 
+        {
+            margin-bottom: 10px;
+            // background-color: red;
+            h1 
+            {
+                color:$color-2;
+                margin: auto;
+                
+            }
+        }
+
+        .row-1-form
+        {
+            .coln-form
+            {
+                // margin: auto;
+                text-align: center;
+                             
+                span 
+                {
+                    color:$color-2;
+                    font-weight: 500;
+                
+                    
+                }
+                form
+                {
+                    background-color: $background-2;
+                    margin-top: 15px;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    width: 60%;
+                    margin: auto;
+
+                    .form-group{
+                        padding: 10px;
+                        
+                        label{
+                            color: $color-2;
+                            font-weight: bold;
+                        }
+                        
+                                               
+                    }
+                    .start-form
+                        {
+                            padding-top: 30px;
+                        }
+                        .col-auto
+                        {
+                            padding-bottom: 30px;  
+                        }
+
+                        .col-auto button
+                        {
+                            padding-left: 40px;
+                            padding-right: 40px;
+                        }
+                }
+            }
+
+            
+        }
+    } 
+
+}

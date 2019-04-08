@@ -17,7 +17,7 @@ export default class extends Page {
       return super.adminAccessOnly()
 
     return (
-      <Layout {...this.props} navmenu={false}>
+      <Layout {...this.props}>
         <h1 className="display-4">Clinic Administration</h1>
         <p className="lead text-muted ">
           List of new doctor signups
@@ -331,7 +331,7 @@ export class Assign extends React.Component {
       marginRight: 10,
     };
   
-    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo ? option.photo : "//localhost:3000/static/image/default.jpg"} /><span>{option.name}</span></span>);
+    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo ? option.photo : "/static/images/default.jpg"} /><span>{option.name}</span></span>);
   }
 
   renderPatients(option, state) {
@@ -346,7 +346,7 @@ export class Assign extends React.Component {
       marginRight: 10,
     };
   
-    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo ? option.photo : "//localhost:3000/static/image/default.jpg"} /><span>{option.name}</span></span>);
+    return (<span><img alt="" style={imgStyle} width="40" height="40" src={option.photo ? option.photo : "/static/images/default.jpg"} /><span>{option.name}</span></span>);
   }
 
   render() {
@@ -368,6 +368,7 @@ export class Assign extends React.Component {
               renderOption={this.renderDoctors}
             />
           </div>
+          <br />
           <div className="d-flex justify-content-center">
             <SelectSearch
               name="patients"
@@ -379,6 +380,7 @@ export class Assign extends React.Component {
               renderOption={this.renderPatients.bind(this)}
             />
           </div>
+          <br />
           <div className="d-flex justify-content-center">
             <button type="button" onClick={this.assignPatients.bind(this)} className="btn btn-primary">
               Update

@@ -35,7 +35,7 @@ export default class extends Page {
   render() {
     if (this.props.session.user) {
       return (
-        <Layout {...this.props} navmenu={false}>
+        <Layout {...this.props}>
           <p className="lead text-center mt-5 mb-5">
             <Link href="/auth"><a>Manage your profile</a></Link>
           </p>
@@ -43,7 +43,7 @@ export default class extends Page {
       )
     } else {
       return (
-        <Layout {...this.props} navmenu={false} signinBtn={false}>
+        <Layout {...this.props} signinBtn={false}>
           <h1 className="text-center display-4 mt-5">Sign in</h1>
           <Row className="mb-5">
             <Col lg="8" className="mr-auto ml-auto" style={{marginBottom: 20}}>

@@ -55,10 +55,10 @@ export default class extends React.Component {
         <React.Fragment>
           <p className="text-center" style={{marginTop: 10, marginBottom: 30}}>{`If you don't have an account, one will be created when you sign in.`}</p>
           <Row style={{borderBottom: 1, borderBottomStyle: 'solid', borderBottomColor: '#dee2e6'}}>
-            <Col xs={12} md={6}>
+            {/* <Col xs={12} md={6}>
               <SignInButtons providers={this.props.providers}/>
-            </Col>
-            <Col xs={12} md={6}>
+            </Col> */}
+            <Col xs={12} md={{ size: 6, offset: 3 }}>
               <Form id="signin" method="post" action="/auth/email/signin" onSubmit={this.handleSubmit}>
                 {/* <Input name="_csrf" type="hidden" value={this.state.session.csrfToken}/> */}
                 <p>

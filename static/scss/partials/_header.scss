@@ -1,0 +1,36 @@
+header
+{
+    z-index: 20;
+    nav
+    {
+        background-color: #0c435a;
+        // background-color:green;
+
+        span{
+            // background-color: red;
+            position: relative;
+            top:4px;
+            // margin-left:15px;
+            color: $main-text-color;
+        }
+        a{
+            color: $main-text-color;
+        }
+
+        #navbarNav
+        {
+            // background-color: #ff0000;
+            // justify-content: end;
+            ul li a{
+                color: $main-text-color;
+            }
+            ul li button
+            {
+                background-color: $main-background-color;
+                color: $main-text-color;
+                border:white solid 1px;;
+            }
+        }
+
+    }
+}

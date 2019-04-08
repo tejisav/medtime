@@ -5,10 +5,57 @@ $ionicons-version: "3.0.0-alpha.3" !default;
 @import "../node_modules/ionicons/dist/scss/ionicons";
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
 @import "../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min";
-@import "nojs-menus.scss";
 @import "react-image-crop.scss";
 @import "react-select-search.scss";
 @import "react-big-calendar.scss";
+@import "react-sidenav.scss";
+
+.sidenav---sidenav---_2tBP {
+  position: fixed;
+  top: 75px;
+  background-color: #0c5c7e;
+  min-width: 105px;
+}
+
+.sidenav---sidenav-toggle---1KRjR {
+  width: 105px;
+}
+
+.sidenav---navicon---3gCRo {
+  width: 105px !important;
+}
+
+.sidenav---navtext---1AE_f {
+  font-size: 18px;
+  margin-top: 1px;
+}
+
+.main-body {
+  margin-top: 100px;
+  margin-left: 106px;
+}
+
+.user-selection .select-search-box {
+  width: 200px;
+}
+
+.colored-circles {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.schedule-button {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .schedule-button {
+    text-align: right;
+  }
+}
 
 .lead {
   font-size: 1.4em;
@@ -30,7 +77,15 @@ pre {
 }
 
 .navbar {
-  border-bottom: 1px solid #ddd;
+  background-color: #0c5c7e !important;
+
+  a {
+    color: white !important;
+  }
+
+  .navbar-brand {
+    margin-right: 0;
+  }
 }
 
 @media (max-width: 768px) {

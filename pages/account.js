@@ -241,9 +241,9 @@ export default class extends Page {
         const alert = (this.state.alertText === null) ? <div /> : <div className={`alert ${this.state.alertStyle}`} role="alert">{this.state.alertText}</div>
         const { crop, croppedImageUrl, src } = this.state;
         return (
-          <Layout {...this.props} navmenu={false}>
+          <Layout {...this.props}>
             <Row className="mb-1">
-              <Col xs="12">
+              <Col xs="12 text-center">
                 <h1 className="display-2">Your Account</h1>
                 <p className="lead text-muted">
                   Edit your profile and link accounts
@@ -252,14 +252,14 @@ export default class extends Page {
             </Row>
             {alert}
             <Row className="mt-4">
-              <Col xs="12" md="8" lg="9">
+              <Col xs="12" md={{ size: 9, offset: 2 }}>
                 <Form method="post" action="/account/user" onSubmit={this.onSubmit}>
                   {/* <Input name="_csrf" type="hidden" value={this.state.session.csrfToken} onChange={() => { }} /> */}
                   <FormGroup row>
                     <Label sm={2}>Avatar:</Label>
                     <Col sm={10} md={8}>
-                      <img width="100" height="100" src={this.state.srcAvatar ? this.state.srcAvatar : "//localhost:3000/static/image/default.jpg"} />
-                      <input type="file" onChange={this.onSelectFile} />
+                      <img width="100" height="100" src={this.state.srcAvatar ? this.state.srcAvatar : "/static/images/default.jpg"} />
+                      <input type="file" className="ml-4" onChange={this.onSelectFile} />
                       {src && (
                         <ReactCrop src={src} crop={this.state.crop}
                           onImageLoaded={this.onImageLoaded}
@@ -296,7 +296,7 @@ export default class extends Page {
                   </FormGroup>
                 </Form>
               </Col>
-              <Col xs="12" md="4" lg="3">
+              <Col xs="12" md={{ size: 4, offset: 4 }}>
                 <LinkAccounts
                   session={this.props.session}
                   linkedAccounts={this.props.linkedAccounts}
@@ -304,7 +304,7 @@ export default class extends Page {
               </Col>
             </Row>
             <Row>
-              <Col>
+              <Col md={{ size: 8, offset: 2 }}>
                 <h2>Delete your account</h2>
                 <p>
                   If you delete your account it will be erased immediately.

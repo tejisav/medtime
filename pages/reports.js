@@ -78,7 +78,7 @@ export default class extends Page {
       if (this.props.session.user.type === "patient" || (this.props.session.user.type === "doctor" && this.props.session.user.clinicVerified)) {
         if (this.props.session.user.selectedUser) {
           return (
-            <Layout {...this.props} title="Reports - Medtime" navmenu={false} container={true}>
+            <Layout {...this.props} title="Reports - Medtime" container={true}>
               <Row className="mb-1 text-center">
                 <Col xs="12">
                   <UploadReports {...this.props}/>
@@ -108,7 +108,7 @@ export class UploadReports extends React.Component {
   render() {
     if (this.props.session.user.type === "doctor" && this.props.session.user.clinicVerified && this.props.session.user.selectedUser) {
       return (
-        <Form className="justify-content-center" inline action="/account/upload" method="POST" encType="multipart/form-data">
+        <Form className="justify-content-center mb-4" inline action="/account/upload" method="POST" encType="multipart/form-data">
           {/* <FormGroup>
             <Input type="hidden" name="_csrf" value={this.props.session.csrfToken} />
           </FormGroup> */}
@@ -142,7 +142,7 @@ export class PatientReports extends React.Component {
           this.props.reports.map((report) => {
             return (
               <Row className="mb-1">
-                <Col xs="12">
+                <Col xs="12" sm={{size: 8, offset: 2 }}>
                   <div className="card text-center">
                     <div className="card-body">
                       <img className="card-img-top" src={'/image/' + report._id.toString()} alt="report" />

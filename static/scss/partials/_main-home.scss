@@ -1,0 +1,349 @@
+
+main
+{
+  padding: 0%;
+  padding-bottom: 5rem;
+  padding-top: 4.5rem;
+//   padding-left: 5px;
+//   padding-right: 5px;
+     .container-fluid
+    {
+        // padding: 0%;
+        padding-left: 5px;
+        padding-right: 5px;
+        width: 100%;
+        // padding-right: 10px;
+        //  padding-left: 10px;
+        //   margin-right: auto;
+        //    margin-left: auto; 
+        .row-head-img
+        {
+            background-image: url("../images/b1.png");
+            background-size: cover;
+            background-position: center;
+            background-color: rgba($color: #000000, $alpha: 0.4);
+            width: 100%; 
+            height: 400px;
+            margin: 0%;
+            position: relative;
+            opacity:0.8;
+            // img
+            // {
+            //     width: 100%;
+            //     height: 400px;
+
+            // }
+
+            .head-text
+            {
+                position: absolute;
+                display: flex;
+                flex-wrap: wrap;
+                flex-basis: auto;
+                margin: auto;
+                justify-content: center;
+                padding: 80px;
+                // background-color: red;
+                color: $main-text-color;
+                .col-text-head
+                {
+                    // position: absolute;
+                    z-index: 10;
+
+                    .btn
+                    {
+                        background-color: $color-2;
+                        border: none;
+                    }
+                }
+            }
+        }
+
+        .row-features
+        {
+            margin: 0%;
+            background-color: $background-2;
+
+            .row-feat-heading
+            {
+                margin: auto;
+                color: $color-2;
+                padding: 30px;
+                // h2
+                // {
+                //     // font-weight: bold;
+                // }
+                
+            }
+
+            .col
+            {
+                margin-bottom: 10px;
+            }
+
+            .card-body
+             {
+                color: $color-2;
+                .btn
+                {
+
+                    background-color:  $color-2;
+                    color: $main-text-color;
+                }
+             }
+
+            .col-card-1
+            {
+                .card-1
+                {
+                    margin: auto;
+                    padding: 15px;
+                }
+                .card-1 img
+                {
+                  
+                  width: 100%;
+                  height: 150px;
+                }
+            }
+            .col-card-2
+            {
+                .card-2
+                {
+                    margin: auto;
+                    padding: 15px;
+                }
+                .card-2 img
+                {
+                  width: 100%;
+                  height: 150px;
+                }
+            }
+            .col-card-3
+            {
+                .card-3
+                {
+                    margin: auto;
+                    padding: 15px;
+                }
+                .card-3 img
+                {
+                  width: 100%;
+                  height: 150px;
+                }
+            }
+        }
+
+        .row-about
+        {
+            margin: 0%;
+            border-top: 1px solid darkgray;
+            padding: 10px;
+
+            .row-abt-heading
+            {
+                margin: auto;
+                color: $color-2;
+                padding: 30px;
+
+
+            }
+
+            div .col-text 
+        {
+            padding: 30px;
+            p
+            {
+                // justify-content: end;
+                color:$color-2;
+                padding: 20px;
+                padding-left: 70px;
+                padding-right: 20px;
+                text-align:center;
+            }
+            .bt-abt-lern
+            {
+                background-color:$color-2;
+                color: $main-text-color;
+                padding: 5px;
+                border-radius: 4px;
+                
+                margin: auto;
+                justify-self: center;
+                
+            }
+             
+        }
+        div .col-abt-img
+        {
+            padding: 30px;
+            justify-content: center;
+
+            img
+            {
+                width: 50%;
+                height: 200px; 
+                border-radius: 4px;
+                
+            }
+        }
+        }
+
+        .row-customer
+    {
+        margin: 0%;
+        border-top: 1px solid darkgray;
+        background-color: $background-2;
+        padding: 10px;
+        .row-cust-heading 
+        {
+            margin: auto;
+            color: $color-2;
+            
+        }
+
+        .row-cust-inf
+        {
+            color: $color-2;
+
+            div blockquote p
+            {
+                font-style: italic;
+                font-size: 1.3rem;
+                padding: 20px;
+
+            }
+        }
+    }
+
+    .row-mail
+    {
+        margin: 0%;
+        border-top: 1px solid darkgray;
+        padding: 10px;
+        .row-mail-heading
+        {
+            margin: auto;
+            padding: 30px;
+            color: $color-2;
+        }
+        .row-mail-enter
+        {
+            margin: auto;
+        }
+        .row-mail-enter
+        {
+            padding: 10px;
+        }
+    }
+    }
+}
+
+@media screen and (max-width: 700px)
+{
+    main 
+    {
+        .container-fluid
+    {
+        .row-features .col-card-3
+        {
+            display:none;
+        }
+        .head-text
+        {
+            .col-text-head
+            {
+                h1,h3
+                {
+                    font-size: 25px;
+                }
+                
+            }
+            
+        }
+
+        .row-about
+        {
+            .row-abt-heading
+            {
+                padding: 10px;
+            }
+            div .col-text 
+            {
+                padding: 10px;
+                p
+                 {
+                    //  background-color: red;
+                    padding-left: 20px;
+                                }
+                
+            }
+            div .col-abt-img
+            {
+                img
+                {
+                    width: 100%;
+                    margin: auto;
+                }
+               
+            }
+        }
+
+        .row-mail
+        {
+            .row-mail-heading
+            {
+              h2
+              {
+                  font-size: 25px;
+              }
+            }
+        }
+    }
+}
+}
+
+@media screen and (min-width: 700px) and (max-width: 1200px)
+{
+    main 
+    {
+        .container-fluid
+    {
+        .row-features .col-card-3
+        {
+            display:none;
+        }
+
+        .row-about
+        {
+            .row-abt-heading
+            {
+                padding: 10px;
+            }
+            div .col-text 
+            {
+                padding: 10px;
+                p
+                 {
+                    //  background-color: red;
+                    padding-left: 20px;
+                                }
+                
+            }
+            div .col-abt-img
+            {
+                img
+                {
+                    width: 80%;
+                    height: 250px;
+                    padding: 40px;
+                    margin: auto;
+                }
+               
+            }
+        }
+
+    }
+}
+
+}

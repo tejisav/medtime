@@ -1,9 +1,243 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>MedTime - Home</title>
-  </head>
-  <body>
-    <h1 style="text-align: center;"><a href="/dashboard">Dashboard</a></h1>
-  </body>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <title>Home</title>
+</head>
+
+<body>
+  <header class="position-fixed">
+
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top ">
+      <a class="navbar-brand" href="home.html">
+        <img src="images/Logo.png" width="40" height="40" class="d-inline-block align-top" alt="Logo">
+        <span>MedTime</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end " id="navbarNav">
+        <ul class="navbar-nav">
+          <!-- <li class="nav-item active">
+                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li> -->
+          <li class="nav-item">
+            <a class="nav-link" href="features.html">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact-us.html">Contact Us</a>
+          </li>
+          <li>
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+            <!-- <button type="button" class="btn">Login</button> -->
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main>
+
+    <div class="container-fluid">
+      <div class="row row-head-img ">
+        <!-- <img class="img-head" src="images/adult-black-care-1549001.jpg" alt="main image"> -->
+        <div class="row col  text-center head-text">
+          <div class="col-12 col-text-head ">
+            <h1>Welcome to MedTime</h1>
+            <div class="w-100"></div>
+            <h3>A platform to manage and record to improve patient health</h3>
+            <div class="w-100"></div>
+            <a href="/dashboard" class="btn  btn-lg btn-primary">Dashboard</a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="row col-md-12 row-features">
+
+        <div class="row row-feat-heading">
+          <h2>Features</h2>
+        </div>
+        <div class="w-100"></div>
+        <!-- test-1 -------------------------------------------------------------------------------- -->
+
+        <div class="col col-card-1">
+          <div class="card card-1 text-center" style="width: 18rem;">
+            <img src="images/Feature_Schedule.svg" class="card-img-top" alt="Feature_Schedule">
+            <div class="card-body">
+              <h5 class="card-title">Medication Schedule</h5>
+              <p class="card-text">Patients will be able to view
+                their medical schedule about the
+                intake of their medication.......</p>
+              <a href="features.html" class="btn ">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col col-card-2">
+          <div class="card card-2 text-center" style="width: 18rem;">
+            <img src="images/Feature_Chart.svg" class="card-img-top" alt="Feature_Chart">
+            <div class="card-body">
+              <h5 class="card-title">Improvement Graph</h5>
+              <p class="card-text">Improvement graph will help
+                both the patients and clinic in
+                staying updated with the
+                patient’s health</p>
+              <a href="features.html" class="btn ">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col col-card-3">
+          <div class="card card-3 text-center" style="width: 18rem;">
+            <img src="images/Feature_Alerts.svg" class="card-img-top" alt="Feature_Alerts">
+            <div class="card-body">
+              <h5 class="card-title">Message/Email Alert</h5>
+              <p class="card-text">Patients will get email alerts
+                whenever they miss their
+                medication intake on specified.....</p>
+              <a href="features.html" class="btn ">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <!-- test-1 end--------------------------------------------------------------------------- -->
+
+      </div>
+      <div class="row col-md-12 row-about">
+        <div class="row row-abt-heading">
+          <h2>About</h2>
+        </div>
+        <div class="row">
+          <div class="col-12 col-lg-6 text-center col-text">
+            <p>
+              Our application will help
+              patients take their medication on time and assess their own health
+              improvement. Thus, minimizing the chances of repeated visits to clinic and improving patient’s health.The
+              main problem which the patients are facing nowadays is that they have to repeatedly visit the doctor for
+              the same illness. This is because they often miss to take their medication on time.
+            </p>
+            <a href="about.html" class="btn bt-abt-lern">Learn More</a>
+          </div>
+          <div class="col-12 col-lg-6 col-abt-img">
+            <img src="images/adult-aged-aging-1389104.jpg" alt="adult ages man taking pills">
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row row-customer">
+
+        <div class="row row-cust-heading">
+          <h2>Customer Review</h2>
+          <!-- <div class="w-100"></div>
+                  <h5>What users say about our website</h5> -->
+        </div>
+        <div class="w-100"></div>
+        <div class="row row-cust-inf">
+          <div class="col-12 col-lg-6">
+            <blockquote>
+              <p> " Very simple app; does exactly one thing and does it very well. All I do is keep track of the
+                medicines I've taken, and those I need to take. Since several of my medicines can leave me in serious
+                danger either if I accidentally forget them"</p>
+            </blockquote>
+
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <blockquote>
+              <p> "Very simple app; does exactly one thing and does it very well. All I do is keep track of the
+                medicines I've taken, and those I need to take. Since several of my medicines can leave me in serious
+                danger either if I accidentally forget them or if "" </p>
+            </blockquote>
+          </div>
+
+
+        </div>
+      </div>
+
+      <div class="row row-mail">
+        <div class="row row-mail-heading">
+          <h2>Try MedTime for free</h2>
+        </div>
+        <div class="w-100"></div>
+        <div class="row row-mail-enter">
+
+          <div class="input-group mb-3">
+            <input type="email" class="form-control" placeholder="Enter Email" aria-label="Enter Email"
+              aria-describedby="button-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2">Try Free Trial</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+
+  </main>
+  <footer>
+    <div class="row ">
+      <nav class="nav col-12 justify-content-center sticky-bottom">
+        <!-- <a class="nav-link active" href="home.html">Home</a> -->
+        <a class="nav-link" href="features.html">Features</a>
+        <a class="nav-link" href="contact-us.html">Contact Us</a>
+        <a class="nav-link" href="about.html">About Us</a>
+        <a class="nav-link" href="/dashboard">Dashboard</a>
+        <div class="w-100"></div>
+        <ul class="nav social-nav">
+
+          <li class="nav-item">
+            <a class="nav-link"><i class="fab fa-facebook-square"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"><i class="fab fa-twitter-square"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"><i class="fab fa-instagram"></i></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+
+
+  </footer>
+
+
+
+</body>
+
 </html>

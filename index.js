@@ -4,13 +4,20 @@ const next = require('next')
 const nextAuth = require('next-auth')
 const nextAuthConfig = require('./next-auth.config')
 
+const cron = require('node-cron');
+const task = require('./models/task')
+
+cron.schedule('0 * * * *', () => {
+  task()
+})
+
 const routes = {
   admin:  require('./routes/admin'),
   account:  require('./routes/account')
 }
 
 // Load environment variables from .env file if present
-require('dotenv').load()
+require('dotenv').config()
 
 process.on('uncaughtException', function(err) {
   console.error('Uncaught Exception: ', err)
